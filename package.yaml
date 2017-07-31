@@ -1,0 +1,13 @@
+
+name: how-to-quickcheck
+version: 0.0.1.0
+ghc-options: -Wall -Werror -Wno-unused-matches
+
+dependencies: 
+  - base
+
+executables:
+  how-to-quickcheck:
+    source-dirs: src
+    main: Main.hs 
+
