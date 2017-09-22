@@ -11,3 +11,12 @@ executables:
     source-dirs: src
     main: Main.hs 
 
+tests:
+  test:
+    source-dirs: test
+    main: Spec.hs
+    ghc-options: -main-is Spec
+    dependencies:
+        - QuickCheck
+        - tasty-quickcheck
+        - tasty
