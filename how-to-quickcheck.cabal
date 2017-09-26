@@ -17,6 +17,27 @@ executable how-to-quickcheck
   build-depends:
       base
 
+test-suite base64-test
+  type: exitcode-stdio-1.0
+  main-is: Base64Test.hs
+  hs-source-dirs:
+      test
+  ghc-options: -Wall -Werror -Wno-unused-matches -main-is Base64Test
+  build-depends:
+      base
+    , QuickCheck
+    , tasty-quickcheck
+    , tasty
+    , quickcheck-instances
+    , bytestring
+    , sandi
+    , regex-posix
+    , containers
+  other-modules:
+      Spec
+      Utils
+  default-language: Haskell2010
+
 test-suite test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
@@ -29,5 +50,6 @@ test-suite test
     , tasty-quickcheck
     , tasty
   other-modules:
+      Base64Test
       Utils
   default-language: Haskell2010

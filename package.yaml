@@ -20,3 +20,17 @@ tests:
         - QuickCheck
         - tasty-quickcheck
         - tasty
+
+  base64-test:
+    source-dirs: test
+    main: Base64Test.hs
+    ghc-options: -main-is Base64Test
+    dependencies:
+      - QuickCheck
+      - tasty-quickcheck
+      - tasty
+      - quickcheck-instances
+      - bytestring
+      - sandi
+      - regex-posix
+      - containers

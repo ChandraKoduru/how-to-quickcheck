@@ -98,3 +98,15 @@ Gen a    ---> Arbitrary
 Property ---> Testable
 
 *Refer test/Spec.hs. It has all the ways a 'Testable' can be constructed.*
+
+## Test case distribution
+
+Refer : test/Base64Test.hs
+
+Properties for testing base64 encoding.
+
+Using collect, classify and cover
+
+collect :: Is useful to collect the distribution of test case inputs
+classify :: Helps in bucketizing, based on how we configure and displaying the distribution in those buckets
+cover :: We case use this to force a failure when enough sample are generated to cover all edge cases, that we are wanting.
