@@ -68,3 +68,33 @@ sized :: (Int -> Gen a) -> Gen a -- controlling the size of the generated sample
 ## Properties
 
 Properties are predicates that can be checked by testing. QuickCheck represents them am *Gen Result*
+A property is a 'Gen Result' i.e generates results. All these results need to be tested OK for the property to stand good.
+quickCheck runs the 'property' multiple times and when all the invocations succeed, the property is considered passed.
+
+The 'Result' object holds the facts about a test including ...
+
+* success/failed
+* retry test
+* statistics about test cases
+* reason for failure
+* exceptions thrown
+
+prop_commutativeAdd :: Gen Result
+prop_commutativeAdd = do
+    (x, y) <- arbitrary :: Gen (Int, Int)
+    return $ if x + y == y + x 
+        then succeeded
+        else failed { reason = "Addition is not commutative" }
+
+with quickCheck (Testable prop => prop -> IO ())
+
+we can construct and invoke all testable.
+
+Any instance of Arbitrary can generate instance of a.
+
+Similarly...Any instance of Testable can generate a Property
+
+Gen a    ---> Arbitrary
+Property ---> Testable
+
+*Refer test/Spec.hs. It has all the ways a 'Testable' can be constructed.*

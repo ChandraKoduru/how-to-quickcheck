@@ -18,3 +18,7 @@ data MyType = MyType {
   , bar :: Bool
   , baz :: Char
 } deriving (Show)
+
+myTypeGenerator :: Gen MyType
+myTypeGenerator = MyType <$> arbitrary <*>  arbitrary <*> arbitrary
+
