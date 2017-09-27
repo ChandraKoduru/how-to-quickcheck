@@ -110,3 +110,5 @@ Using collect, classify and cover
 collect :: Is useful to collect the distribution of test case inputs
 classify :: Helps in bucketizing, based on how we configure and displaying the distribution in those buckets
 cover :: We case use this to force a failure when enough sample are generated to cover all edge cases, that we are wanting.
+scale :: To scale up/down a generator (Gen a) by a factor (function signature: (Int -> Int) -> Gen a -> Gen a)
+forAll : To use a custom generator 
