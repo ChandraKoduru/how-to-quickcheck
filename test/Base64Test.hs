@@ -7,11 +7,12 @@ import Data.Monoid ((<>))
 import Test.QuickCheck.Instances ()
 import Test.Tasty ()
 import Test.QuickCheck (quickCheck, collect, Property
-  , classify, cover, Gen, scale, forAll, arbitrary)
+  , classify, cover, Gen, scale, forAll, arbitrary
+  , (==>))
 
 import qualified Data.ByteString as BL
 import qualified Data.Set as S
-import Codec.Binary.Base64 (encode)
+import Codec.Binary.Base64 (encode, decode)
 import Text.Regex.Posix ((=~))
 
 prop_sizeRatio :: BL.ByteString -> Bool
@@ -56,6 +57,30 @@ prop_outputAlphabet_with_scaledTestInput :: Property
 prop_outputAlphabet_with_scaledTestInput = 
   forAll (scale (*3) (arbitrary :: Gen BL.ByteString)) prop_outputAlphabet
 
+-- property that confirms that decode of encode works
+prop_decodeOfEncode :: BL.ByteString -> Bool
+prop_decodeOfEncode b = 
+  Right b == decode (encode b)
+
+-- property that checks that encode of decode also works
+prop_encodeOfDecode :: BL.ByteString -> Property
+prop_encodeOfDecode b =
+  legit ==> b == encodeEither dec
+  where
+    dec :: Either (BL.ByteString, BL.ByteString) BL.ByteString
+    dec = decode b
+
+    legit :: Bool
+    legit = isRight dec
+
+    encodeEither :: Either (BL.ByteString, BL.ByteString) BL.ByteString -> BL.ByteString
+    encodeEither (Right x) = encode x
+    encodeEither (Left _) = error "Error: extracting Right from Either that is a Left."
+
+isRight :: Either a b -> Bool
+isRight (Right _) = True
+isRight _ = False
+
 main :: IO ()
 main = do
   quickCheck prop_sizeRatio
@@ -63,6 +88,8 @@ main = do
   quickCheck prop_outputAlphabet
   quickCheck prop_simple_outputAlphabet
   quickCheck prop_outputAlphabet_with_scaledTestInput
+  quickCheck prop_decodeOfEncode
+  quickCheck prop_encodeOfDecode
 
 main1 :: IO ()
 main1 = main
