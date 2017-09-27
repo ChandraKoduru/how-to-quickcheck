@@ -8,12 +8,13 @@ import Test.QuickCheck.Instances ()
 import Test.Tasty ()
 import Test.QuickCheck (quickCheck, collect, Property
   , classify, cover, Gen, scale, forAll, arbitrary
-  , (==>))
+  , (==>), choose, elements, listOf, vectorOf)
 
 import qualified Data.ByteString as BL
 import qualified Data.Set as S
 import Codec.Binary.Base64 (encode, decode)
 import Text.Regex.Posix ((=~))
+import GHC.Word (Word8)
 
 prop_sizeRatio :: BL.ByteString -> Bool
 prop_sizeRatio b =
@@ -81,6 +82,24 @@ isRight :: Either a b -> Bool
 isRight (Right _) = True
 isRight _ = False
 
+-- Building a custom generator for valid 'encoded input' to feed to decoder
+encodedBase64 :: Gen BL.ByteString
+encodedBase64 = do
+  body <- concat <$> listOf (group 0)
+  end <- group =<< choose (0, 2)
+  return $ BL.pack $ body <> end
+  where
+    group :: Int -> Gen [Word8]
+    group pad = do
+      letters <- vectorOf (4 - pad)
+        . elements . map (fromIntegral . ord)
+        $ ['A'..'Z'] <> ['a'..'z'] <> ['O'..'9'] <> ['+', '/', '=']
+      return $ letters <> replicate pad 61
+
+prop_encodeOfDecode_using_encodedBase64_generator :: Property
+prop_encodeOfDecode_using_encodedBase64_generator =
+  forAll encodedBase64 prop_encodeOfDecode
+
 main :: IO ()
 main = do
   quickCheck prop_sizeRatio
@@ -90,6 +109,7 @@ main = do
   quickCheck prop_outputAlphabet_with_scaledTestInput
   quickCheck prop_decodeOfEncode
   quickCheck prop_encodeOfDecode
+  quickCheck prop_encodeOfDecode_using_encodedBase64_generator
 
 main1 :: IO ()
 main1 = main
